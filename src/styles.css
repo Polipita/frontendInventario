@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.transition-margin {
+  transition: margin-left 0.3s ease;
+}
+/* Agrega esto a tu archivo CSS */
+main {
+  margin: 0; /* Ajusta si hay paddings no deseados */
+}
