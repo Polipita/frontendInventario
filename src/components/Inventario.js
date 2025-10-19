@@ -52,8 +52,8 @@ const Inventario = () => {
         await api.delete(`/productos/${id}`);
         fetchProductos();
       } catch (err) {
-        setError('Error al eliminar');
-      }
+  setError(err.response?.data?.error || 'Error al eliminar');
+}
     }
   };
 
