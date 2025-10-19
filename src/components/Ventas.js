@@ -41,7 +41,7 @@ const Ventas = () => {
         );
       }
     } else {
-      setCarrito([...carrito, { ...product, cantidad: 1 }]);
+      setCarrito([...carrito, { ...product, precio: Number(product.precio), cantidad: 1 }]);
     }
   };
 
@@ -56,7 +56,7 @@ const Ventas = () => {
     );
   };
 
-  const total = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+  const total = carrito.reduce((sum, item) => sum + Number(item.precio) * item.cantidad, 0);
 
   const handleVenta = async () => {
     try {
