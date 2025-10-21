@@ -45,25 +45,69 @@ export const AuthProvider = ({ children }) => {
     }  
   );  
 
-const login = async (credentials) => {  
-  try {  
-    const response = await api.post('/auth/login', credentials);  
-    const { token: newToken, usuario, rol } = response.data;  
+const login = async (credentials) => {
+  try {
+    console.log('[AUTH] login -> credentials:', credentials);
+    const response = await api.post('/auth/login', credentials);
+    console.log('[AUTH] /auth/login response:', response.data);
 
-    setToken(newToken);  
-    setUser(usuario);  
-    setRole(rol);  
+    const data = response.data;
 
-    localStorage.setItem('token', newToken);  
-    localStorage.setItem('role', rol);  
-    localStorage.setItem('usuario', usuario);  
+    if (data.step === 'verify') {
+      // guarda ID temporal y loguea
+      console.log('[AUTH] guardando pendingUserId:', data.userId);
+      localStorage.setItem('pendingUserId', data.userId);
+      return { step: 'verify', message: data.message, userId: data.userId };
+    }
 
-    return { success: true };  
-  } catch (error) {  
-    return { success: false, error: error.response?.data?.error || 'Error en login' };  
-  }  
+    const { token: newToken, usuario, rol } = data;
+    // ... resto igual
+    setToken(newToken);
+    setUser(usuario);
+    setRole(rol);
+    localStorage.setItem('token', newToken);
+    localStorage.setItem('role', rol);
+    localStorage.setItem('usuario', usuario);
+
+    return { success: true };
+  } catch (error) {
+    console.error('[AUTH] login error:', error.response?.data || error.message);
+    return { success: false, error: error.response?.data?.error || 'Error en login' };
+  }
 };
- 
+
+
+const verifyCode = async (codigo) => {
+  try {
+    const userId = localStorage.getItem('pendingUserId'); // 👈 obtén el id
+    console.log("[AUTH] verifyCode -> pendingUserId from localStorage:", userId, "codigo:", codigo);
+
+    const response = await api.post('/auth/verify-code', { userId, code: codigo }); // 👈 usa "code" y no "codigo"
+
+    const data = response.data;
+
+    if (data.success) {
+      const { token: newToken, usuario, rol } = data;
+
+      setToken(newToken);
+      setUser(usuario);
+      setRole(rol);
+
+      localStorage.setItem('token', newToken);
+      localStorage.setItem('role', rol);
+      localStorage.setItem('usuario', usuario);
+
+      return { success: true };
+    } else {
+      return { success: false, error: data.error || 'Código inválido' };
+    }
+  } catch (error) {
+    console.log("[AUTH] verifyCode error:", error.response?.data || error.message);
+    return { success: false, error: error.response?.data?.error || 'Error al verificar código' };
+  }
+};
+
+
 
   const register = async (userData) => {  
     try {  
@@ -96,6 +140,7 @@ const login = async (credentials) => {
     token,  
     role,  
     login,  
+    verifyCode,
     register,  
     logout,  
     api,  

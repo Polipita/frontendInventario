@@ -9,11 +9,13 @@ const Empleados = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({
     id: null,
     nombre: "",
     usuario: "",
+    correo: "",
     contrasena: "",
     rol: "empleado",
   });
@@ -82,6 +84,7 @@ const Empleados = () => {
       id: null,
       nombre: "",
       usuario: "",
+      correo: "",
       contrasena: "",
       rol: "empleado",
     });
@@ -142,7 +145,7 @@ const Empleados = () => {
         <SummaryCard label="Empleados" value={totalEmpleados} color="green" />
       </div>
 
-            {/* ALERTA FLOTANTE */}
+      {/* ALERTA FLOTANTE */}
       {error && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -154,7 +157,6 @@ const Empleados = () => {
         </motion.div>
       )}
 
-
       {/* TABLA */}
       <div className="bg-white rounded-lg shadow-md overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
@@ -165,6 +167,9 @@ const Empleados = () => {
               </th>
               <th className="px-6 py-3 text-left text-xs font-semibold uppercase">
                 Usuario
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-semibold uppercase">
+                Correo
               </th>
               <th className="px-6 py-3 text-left text-xs font-semibold uppercase">
                 Rol
@@ -184,6 +189,7 @@ const Empleados = () => {
               >
                 <td className="px-6 py-4">{emp.nombre}</td>
                 <td className="px-6 py-4">{emp.usuario}</td>
+                <td className="px-6 py-4">{emp.correo}</td>
                 <td className="px-6 py-4">
                   <span
                     className={`px-2 py-1 rounded-full text-xs ${
@@ -239,62 +245,130 @@ const Empleados = () => {
               {isEdit ? "Editar Empleado" : "Agregar Empleado"}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                ref={inputRef}
-                type="text"
-                placeholder="Nombre"
-                value={formData.nombre}
-                onChange={(e) =>
-                  setFormData({ ...formData, nombre: e.target.value })
-                }
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded"
-              />
-              <input
-                type="text"
-                placeholder="Usuario"
-                value={formData.usuario}
-                onChange={(e) =>
-                  setFormData({ ...formData, usuario: e.target.value })
-                }
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded"
-              />
-              <input
-                type="password"
-                placeholder="Contraseña"
-                value={formData.contrasena}
-                onChange={(e) =>
-                  setFormData({ ...formData, contrasena: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded"
-              />
-              <select
-                value={formData.rol}
-                onChange={(e) =>
-                  setFormData({ ...formData, rol: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded"
-              >
-                <option value="empleado">Empleado</option>
-                <option value="admin">Admin</option>
-              </select>
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 bg-gray-300 rounded"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded"
-                >
-                  {isEdit ? "Actualizar" : "Crear"}
-                </button>
-              </div>
-            </form>
+  <input
+    ref={inputRef}
+    type="text"
+    placeholder="Nombre"
+    value={formData.nombre}
+    onChange={(e) =>
+      setFormData({ ...formData, nombre: e.target.value })
+    }
+    required
+    className="w-full px-3 py-2 border border-gray-300 rounded"
+  />
+
+  <input
+    type="text"
+    placeholder="Usuario"
+    value={formData.usuario}
+    onChange={(e) =>
+      setFormData({ ...formData, usuario: e.target.value })
+    }
+    required
+    className="w-full px-3 py-2 border border-gray-300 rounded"
+  />
+
+  <input
+    type="email"
+    placeholder="Correo electrónico"
+    value={formData.correo}
+    onChange={(e) =>
+      setFormData({ ...formData, correo: e.target.value })
+    }
+    required
+    className="w-full px-3 py-2 border border-gray-300 rounded"
+  />
+
+  {/* 👁️ Campo de contraseña con botón para mostrar/ocultar */}
+  <div className="relative">
+    <input
+      type={showPassword ? "text" : "password"}
+      placeholder="Contraseña"
+      value={formData.contrasena}
+      onChange={(e) =>
+        setFormData({ ...formData, contrasena: e.target.value })
+      }
+      className="w-full px-3 py-2 border border-gray-300 rounded pr-10"
+    />
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+    >
+      {showPassword ? (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+          />
+        </svg>
+      ) : (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M3.98 8.223A10.477 10.477 0 001.934 12C3.21 16.057 7 19 11.478 19a10.5 10.5 0 009.542-7 10.499 10.499 0 00-3.563-4.865m-3.02-1.384A10.45 10.45 0 0011.478 5c-4.477 0-8.268 2.943-9.542 7 .6 1.912 1.89 3.543 3.542 4.664"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+          />
+        </svg>
+      )}
+    </button>
+  </div>
+
+  <select
+    value={formData.rol}
+    onChange={(e) =>
+      setFormData({ ...formData, rol: e.target.value })
+    }
+    className="w-full px-3 py-2 border border-gray-300 rounded"
+  >
+    <option value="empleado">Empleado</option>
+    <option value="admin">Admin</option>
+  </select>
+
+  <div className="flex justify-end gap-2">
+    <button
+      type="button"
+      onClick={() => setShowModal(false)}
+      className="px-4 py-2 bg-gray-300 rounded"
+    >
+      Cancelar
+    </button>
+    <button
+      type="submit"
+      className="px-4 py-2 bg-blue-600 text-white rounded"
+    >
+      {isEdit ? "Actualizar" : "Crear"}
+    </button>
+  </div>
+</form>
+
           </motion.div>
         </motion.div>
       )}
